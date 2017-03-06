@@ -1,0 +1,69 @@
+	//TUTO SAVING
+	// XMLDocument xmlDoc;
+
+	// XMLNode * pRoot = xmlDoc.NewElement("Root");
+	// xmlDoc.InsertFirstChild(pRoot);
+
+	// //First child of "Root"
+	// XMLElement * pElement = xmlDoc.NewElement("IntValue");
+	// pElement->SetText(10); //INT
+	// pRoot->InsertEndChild(pElement);
+
+	// //Second child of "Root"
+	// pElement = xmlDoc.NewElement("FloatValue");
+	// pElement->SetText(0.5f); //FLOAT
+	// pRoot->InsertEndChild(pElement);
+
+	// //a list
+	// pElement = xmlDoc.NewElement("Date");
+	// pElement->SetAttribute("day", 26);
+	// pElement->SetAttribute("month", "April");
+	// pElement->SetAttribute("year", 2014);
+	// pElement->SetAttribute("dateFormat", "26/04/2014");
+	// pRoot->InsertEndChild(pElement);
+
+	// //storing vector<int>
+	// std::vector<int> aVector (10);
+	// pElement = xmlDoc.NewElement("List");
+	// pElement->SetAttribute("itemCount", static_cast<int>(aVector.size()) ); //give the size of the vector (not necessary)
+	// for(auto& item : aVector)
+	// {
+	// 	item = std::rand();
+	// 	XMLElement * pListElement = xmlDoc.NewElement("Item");
+	// 	pListElement->SetText(item);
+
+	// 	pElement->InsertEndChild(pListElement);
+	// }
+	// pRoot->InsertEndChild(pElement);
+
+	// //Saving data
+	// XMLError eResult = xmlDoc.SaveFile("/home/noury/vipaclean/lytro_simulation/config/SavedData.xml");
+	// XMLCheckResult(eResult);
+	
+	//TUTO LOADING
+	XMLDocument xmlDoc;
+    XMLError eResult = xmlDoc.LoadFile( "/home/noury/vipaclean/lytro_simulation/config/SavedData.xml" );
+	XMLCheckResult(eResult);
+
+	//Load a root
+	XMLNode* pRoot = xmlDoc.FirstChild();
+	if (pRoot == nullptr) return XML_ERROR_FILE_READ_ERROR; //Test if is empty 
+
+	// XMLElement* pElement = pRoot->FirstChildElement("unTruc");
+	XMLElement * pElement = pRoot->FirstChildElement("IntValue");
+	if (pElement == nullptr) return XML_ERROR_PARSING_ELEMENT;
+
+	//Put data inside a int
+	int iOutInt;
+	eResult = pElement->QueryIntText(&iOutInt);
+	XMLCheckResult(eResult);
+	// std::cout << "iOutInt = " << iOutInt << std::endl;
+
+	//Put data inside a float
+	pElement = pRoot->FirstChildElement("FloatValue");
+	if (pElement == nullptr) return XML_ERROR_PARSING_ELEMENT;
+
+	float fOutFloat;
+	eResult = pElement->QueryFloatText(&fOutFloat);
+	XMLCheckResult(eResult);
+	std::cout << "fOutFloat = " << fOutFloat << std::endl;
