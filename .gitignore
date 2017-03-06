@@ -1,0 +1,9 @@
+#exe
+*.a
+*.o
+*.out
+
+#images
+*.jpg
+*.jpeg
+*.png
