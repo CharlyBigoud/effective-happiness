@@ -9,13 +9,16 @@ struct SimulatedAnnealing
     STATE& state;
     double acceptation_tolerance;
     double temperature_min;
-    int iterations_max;
+    double iterations_max;
 
-    void run();
+    double temperature(const int) const;
     double metropolis(const double, const double);
+    void run();
 
-    double temperature;
+    double t;
 };
+
+template<typename MODEL, typename STATE> double energy(const MODEL&, const STATE&);
 
 //returns a value betwwen 0 or 1
 double random_value()
@@ -30,20 +33,23 @@ double SimulatedAnnealing<MODEL, STATE>::metropolis(const double delta_e, const 
 }
 
 template<typename MODEL, typename STATE>
-double energy(const MODEL& model, const STATE& state);
+double SimulatedAnnealing<MODEL, STATE>::temperature(const int it) const
+{
+    return double(it / iterations_max) * t;
+}
 
 template<typename MODEL, typename STATE>
 void SimulatedAnnealing<MODEL, STATE>::run()
 {
-    temperature = 1000.0;
+    t = 1000.0;
 
     //energy_precedente is initiated with initial state;
     double energy_precedente = energy(this->model, state);
 
     int it = 0;
     while (
-        (temperature >= temperature_min)
-    or  (it <= iterations_max)
+        (it < iterations_max)
+    and (t >= temperature_min)
     )
     {
         const STATE current_state = state.generate(1.0);
@@ -51,13 +57,12 @@ void SimulatedAnnealing<MODEL, STATE>::run()
 
         if (
            (current_energy < energy_precedente)
-        or (random_value() < metropolis(current_energy - energy_precedente, temperature))
+        and (random_value() < metropolis(current_energy - energy_precedente, t))
         ){
-            std::cout << "iejvice";
             state = current_state;
             energy_precedente = current_energy;
 
-            --temperature;
+            t = temperature(it);
         }
         else
         {
@@ -67,6 +72,6 @@ void SimulatedAnnealing<MODEL, STATE>::run()
         ++it;
     }
 
-    // std::cout << 
+    // std::cout << << std::endl;
 
 };

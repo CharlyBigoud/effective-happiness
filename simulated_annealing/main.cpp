@@ -38,18 +38,14 @@ int main()
     reference_camera.focal = 50.0;
     reference_camera.u0 = 200.0;
     reference_camera.v0 = 200.0;
-    reference_camera.xi = 0.0;
 
     PinholeCameraModel camera_to_optimize;
-    camera_to_optimize.focal = 50.0;
-    camera_to_optimize.u0 = 200.0;
-    camera_to_optimize.v0 = 200.0;
-    camera_to_optimize.xi = 0.0;
+    camera_to_optimize.focal = 60.0;
+    camera_to_optimize.u0 = 45.0;
+    camera_to_optimize.v0 = 45.0;
 
     Observations observations{
           {{1,2,50}, {3,4,50}, {5,6,50}, {7,8,50}, {9,10,50}, {11,12,50}, {13,14,50}, {15,16,50}, {17,18,50}}
-        // , {{0,0}, {3,4}, {5,6}, {7,8}, {9,10}, {11,12}, {13,14}, {15,16}, {17,18}}
-        // , P2DS{} (10)
     };
 
     observations.pixels.resize(observations.p3ds.size());
@@ -62,16 +58,17 @@ int main()
     SimulatedAnnealing<Observations, PinholeCameraModel> sa{
           observations
         , camera_to_optimize
+        , 10.0
         , 0.0
-        , (int)1e1
+        , 1e5
     };
 
-    std::cout << reference_camera << std::endl;
-    std::cout << camera_to_optimize << std::endl;
+    std::cout << "reference_camera:\n" << reference_camera << std::endl;
+    std::cout << "camera_to_optimize:\n" << camera_to_optimize << std::endl;
 
     sa.run();
 
-    std::cout << camera_to_optimize << std::endl;
+    std::cout << "camera_to_optimize:\n" << camera_to_optimize << std::endl;
 
     return 0;
 }

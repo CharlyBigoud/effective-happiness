@@ -7,7 +7,6 @@ struct PinholeCameraModel
     double focal;
     double u0;
     double v0;
-    double xi;
     double k = 1.0, l = 1.0;
 
     // PinholeCameraModel(const double f, const double u, const double v, const double k_i, const double l_i)
@@ -31,7 +30,6 @@ struct PinholeCameraModel
         pcm.focal = focal + distrib(gen);
         pcm.u0 = u0 + distrib(gen);
         pcm.v0 = v0 + distrib(gen);
-        pcm.xi = xi + distrib(gen);
 
         return pcm;
     };
@@ -39,6 +37,6 @@ struct PinholeCameraModel
 
 std::ostream& operator<<(std::ostream& o, const PinholeCameraModel& ucm)
 {
-    o << "PinholeCameraModel:\n\t- focal: " << ucm.focal << "\n\t- center: {" << ucm.u0 << ", " << ucm.v0 << "}\n\t- xi: " << ucm.xi;
+    o << "\t- focal: " << ucm.focal << "\n\t- center: {" << ucm.u0 << ", " << ucm.v0 << "}";
     return o;
 }
