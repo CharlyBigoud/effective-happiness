@@ -37,6 +37,9 @@ struct PinholeCameraModel
 
 std::ostream& operator<<(std::ostream& o, const PinholeCameraModel& ucm)
 {
-    o << "\t- focal: " << ucm.focal << "\n\t- center: {" << ucm.u0 << ", " << ucm.v0 << "}";
+    o << "\t- focal: " << ucm.focal << "\n";
+    o << "\t- center: {" << ucm.u0 << ", " << ucm.v0 << "}\n";
+    o << "\t- k: " << ucm.k << "\n";
+    o << "\t- l: " << ucm.l << "\n";
     return o;
 }
