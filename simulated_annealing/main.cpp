@@ -12,17 +12,44 @@ struct Observations
     P2DS pixels;
 };
 
+struct State
+{
+    PinholeCameraModel& camera;
+    double exploration_value;
+
+    State generate(){
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::normal_distribution<> distrib(0, exploration_value);
+
+        PinholeCameraModel pcm;
+        pcm.focal = camera.focal + distrib(gen);
+        pcm.u0 = camera.u0 + distrib(gen);
+        pcm.v0 = camera.v0 + distrib(gen);
+        // pcm.k = camera.k + distrib(gen);
+        // pcm.l = camera.l + distrib(gen);
+
+        return State{pcm, exploration_value};
+    };
+
+    void operator=(const State& s)
+    {
+        camera = s.camera;
+        exploration_value = s.exploration_value;
+    }
+};
+
 double distance(const P2D& p1, const P2D& p2)
 {
     return std::hypot(p1.x - p2.x, p1.y - p2.y);
 }
 
-double energy(const Observations& obs, const PinholeCameraModel& pcm)
+double energy(const Observations& obs, const State& s)
 {
     double e = 0.0;
     for (size_t i=0 ; i<obs.pixels.size() ; ++i)
     {
-        double d = distance(obs.pixels[i], pcm.project(obs.p3ds[i]));
+        double d = distance(obs.pixels[i], s.camera.project(obs.p3ds[i]));
         e += std::hypot(d, d);
     }
 
@@ -34,18 +61,15 @@ double energy(const Observations& obs, const PinholeCameraModel& pcm)
 */
 int main()
 {
-    PinholeCameraModel reference_camera;
-    reference_camera.focal = 50.0;
-    reference_camera.u0 = 200.0;
-    reference_camera.v0 = 200.0;
+    std::cout << "faire schéma de refroidissment" << std::endl;
+    std::cout << "bug si les params sont égaux a zero" << std::endl;
+    std::cout << "bug si on optimize k et l" << std::endl;
 
-    PinholeCameraModel camera_to_optimize;
-    camera_to_optimize.focal = 60.0;
-    camera_to_optimize.u0 = 45.0;
-    camera_to_optimize.v0 = 45.0;
-    camera_to_optimize.k = 392.0;
-    camera_to_optimize.l = 392.0;
+    //building reference
+    PinholeCameraModel reference_camera{50.0, 200.0, 200.0, 1.0, 1.0};
+    std::cout << "reference_camera:\n" << reference_camera << std::endl;
 
+    //computing model
     Observations observations{
           {{1,2,50}, {3,4,50}, {5,6,50}, {7,8,50}, {9,10,50}, {11,12,50}, {13,14,50}, {15,16,50}, {17,18,50}}
     };
@@ -54,23 +78,29 @@ int main()
     for (size_t i=0 ; i<observations.pixels.size() ; ++i)
     {
         observations.pixels[i] = reference_camera.project(observations.p3ds[i]);
-        // std::cout << observations.p3ds[i] << " -> " << observations.pixels[i] << "\n";
     }
 
-    SimulatedAnnealing<Observations, PinholeCameraModel> sa{
-          observations
-        , camera_to_optimize
-        , 10.0
-        , 0.0
-        , 1e5
+    //Creating state
+    PinholeCameraModel to_optimize{1.0, 1.0, 1.0, 1.0, 1.0};
+    State state{
+        to_optimize
+        , 0.1
     };
 
-    std::cout << "reference_camera:\n" << reference_camera << std::endl;
-    std::cout << "camera_to_optimize:\n" << camera_to_optimize << std::endl;
+    SimulatedAnnealing<Observations, State> sa{
+          observations
+        , state
+        , CoolingSchedule{}
+        , 10.0
+        , 0.0
+        , 1e4
+    };
+
+    std::cout << "camera_to_optimize:\n" << state.camera << std::endl;
 
     sa.run();
 
-    std::cout << "camera_to_optimize:\n" << camera_to_optimize << std::endl;
+    std::cout << "camera_to_optimize:\n" << state.camera << std::endl;
 
     return 0;
 }

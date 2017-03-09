@@ -2,17 +2,33 @@
 
 // https://fr.wikipedia.org/wiki/Recuit_simul%C3%A9
 
+// Par exemple, on pourrait avoir trois paramètres : la température
+// initiale, la longueur d’un palier (nombre d’itérations avant de
+// changer la température) et le coefficient de décroissance (si
+// décroissance géométrique).
+// • On peut aussi utiliser d’autres schémas de refroidissement :
+// – On peut faire décroître la température à chaque itération.
+// – On utilise parfois une température constante (algorithme de Metropolis).
+// – On peut utiliser des schémas plus complexes, dans lesquels la
+// température peut parfois remonter.
+struct CoolingSchedule{
+
+};
+
+
 template<typename MODEL, typename STATE>
 struct SimulatedAnnealing
 {
     const MODEL& model;
     STATE& state;
+    const CoolingSchedule& cool;
     double acceptation_tolerance;
     double temperature_min;
     double iterations_max;
 
+    //depend du schéma de refroissement
     double temperature(const int) const;
-    double metropolis(const double, const double);
+    bool metropolisCritieria(const double, const double);
     void run();
 
     double t;
@@ -27,10 +43,19 @@ double random_value()
 }
 
 template<typename MODEL, typename STATE>
-double SimulatedAnnealing<MODEL, STATE>::metropolis(const double delta_e, const double temperature)
+bool SimulatedAnnealing<MODEL, STATE>::metropolisCritieria(const double delta_e, const double temperature)
 {
-    return std::exp( -delta_e / temperature);
+    if (delta_e <= 0)
+    {
+        return true;
+    }
+    else if (random_value() <= std::exp( -delta_e / temperature) )
+    {
+        return true;
+    }
+    else return false;
 }
+
 
 template<typename MODEL, typename STATE>
 double SimulatedAnnealing<MODEL, STATE>::temperature(const int it) const
@@ -38,10 +63,12 @@ double SimulatedAnnealing<MODEL, STATE>::temperature(const int it) const
     return double(it / iterations_max) * t;
 }
 
+// cooling schedule
+
 template<typename MODEL, typename STATE>
 void SimulatedAnnealing<MODEL, STATE>::run()
 {
-    t = 1000.0;
+    t = 500.0;
 
     //energy_precedente is initiated with initial state;
     double energy_precedente = energy(this->model, state);
@@ -52,13 +79,11 @@ void SimulatedAnnealing<MODEL, STATE>::run()
     and (t >= temperature_min)
     )
     {
-        const STATE current_state = state.generate(1.0);
-        double current_energy = energy(model, current_state);
+        const STATE current_state = state.generate();
+        const double current_energy = energy(model, current_state);
 
-        if (
-           (current_energy < energy_precedente)
-        and (random_value() < metropolis(current_energy - energy_precedente, t))
-        ){
+        if (metropolisCritieria(current_energy - energy_precedente, t))
+        {
             state = current_state;
             energy_precedente = current_energy;
 
@@ -71,7 +96,4 @@ void SimulatedAnnealing<MODEL, STATE>::run()
 
         ++it;
     }
-
-    // std::cout << << std::endl;
-
 };
