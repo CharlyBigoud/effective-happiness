@@ -43,6 +43,8 @@ int main()
     camera_to_optimize.focal = 60.0;
     camera_to_optimize.u0 = 45.0;
     camera_to_optimize.v0 = 45.0;
+    camera_to_optimize.k = 392.0;
+    camera_to_optimize.l = 392.0;
 
     Observations observations{
           {{1,2,50}, {3,4,50}, {5,6,50}, {7,8,50}, {9,10,50}, {11,12,50}, {13,14,50}, {15,16,50}, {17,18,50}}
