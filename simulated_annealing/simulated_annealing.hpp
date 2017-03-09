@@ -1,21 +1,13 @@
+#include <random>
+
 // https://fr.wikipedia.org/wiki/Recuit_simul%C3%A9
 
-struct State
-{
-    State generate(){ return State{}; };
-};
-
-struct Model
-{
-};
-
-
-
-
+template<typename MODEL, typename STATE>
 struct SimulatedAnnealing
 {
-    Model model;
-    State state;
+    const MODEL& model;
+    STATE& state;
+    double acceptation_tolerance;
     double temperature_min;
     int iterations_max;
 
@@ -25,43 +17,47 @@ struct SimulatedAnnealing
     double temperature;
 };
 
-
-double valeur_random()
+//returns a value betwwen 0 or 1
+double random_value()
 {
-    return double{};
-
+    return ((double) std::rand() / (RAND_MAX));
 }
 
-double SimulatedAnnealing::metropolis(const double delta_E, const double temperature)
+template<typename MODEL, typename STATE>
+double SimulatedAnnealing<MODEL, STATE>::metropolis(const double delta_e, const double temperature)
 {
-    return std::exp(- delta_E / temperature);
+    return std::exp( -delta_e / temperature);
 }
 
+template<typename MODEL, typename STATE>
+double energy(const MODEL& model, const STATE& state);
 
-double calcul_energie(const Model model, const State state);
-
-void SimulatedAnnealing::run()
+template<typename MODEL, typename STATE>
+void SimulatedAnnealing<MODEL, STATE>::run()
 {
-    double energie_precedente;
+    temperature = 1000.0;
+
+    //energy_precedente is initiated with initial state;
+    double energy_precedente = energy(this->model, state);
 
     int it = 0;
     while (
         (temperature >= temperature_min)
     or  (it <= iterations_max)
-    ) 
+    )
     {
-        const State s_voisin = state.generate();
+        const STATE current_state = state.generate(1.0);
+        double current_energy = energy(model, current_state);
 
-        double energie_courante = calcul_energie(this->model, s_voisin);
-
-        //on accepte
-        double delta_E = energie_courante - energie_precedente;
         if (
-           (delta_E < 0)
-        or (valeur_random() < metropolis(delta_E, temperature))
+           (current_energy < energy_precedente)
+        or (random_value() < metropolis(current_energy - energy_precedente, temperature))
         ){
-            state = s_voisin;
-            energie_precedente = energie_courante;
+            std::cout << "iejvice";
+            state = current_state;
+            energy_precedente = current_energy;
+
+            --temperature;
         }
         else
         {
@@ -70,4 +66,7 @@ void SimulatedAnnealing::run()
 
         ++it;
     }
+
+    // std::cout << 
+
 };
