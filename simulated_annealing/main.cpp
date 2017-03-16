@@ -22,12 +22,13 @@ struct State
         std::mt19937 gen(rd());
         std::normal_distribution<> distrib(0, exploration_value);
 
-        PinholeCameraModel pcm;
-        pcm.focal = camera.focal + distrib(gen);
-        pcm.u0 = camera.u0 + distrib(gen);
-        pcm.v0 = camera.v0 + distrib(gen);
-        // pcm.k = camera.k + distrib(gen);
-        // pcm.l = camera.l + distrib(gen);
+        PinholeCameraModel pcm(
+          camera.focal + distrib(gen)
+        , camera.u0 + distrib(gen)
+        , camera.v0 + distrib(gen)
+        // , camera.k + distrib(gen)
+        // , camera.l + distrib(gen)
+        );
 
         return State{pcm, exploration_value};
     };
@@ -41,7 +42,7 @@ struct State
 
 double distance(const P2D& p1, const P2D& p2)
 {
-    return std::hypot(p1.x - p2.x, p1.y - p2.y);
+    return std::hypot(p1.x() - p2.x(), p1.y() - p2.y());
 }
 
 double energy(const Observations& obs, const State& s)
@@ -66,7 +67,7 @@ int main()
     std::cout << "bug si on optimize k et l" << std::endl;
 
     //building reference
-    PinholeCameraModel reference_camera{50.0, 200.0, 200.0, 1.0, 1.0};
+    PinholeCameraModel reference_camera(50.0, 200.0, 200.0, 1.0, 1.0);
     std::cout << "reference_camera:\n" << reference_camera << std::endl;
 
     //computing model
