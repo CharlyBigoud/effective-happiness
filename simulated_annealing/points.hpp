@@ -17,21 +17,17 @@ template<typename T, int S> struct PT : Truc<PT<T, S>>
 
     PT() {}
 
-    template<bool b> struct Inf {};
 
-    template<int, int> struct OutOfRange;
-    template<int I> T const& at(Inf<true>) const { return data[I]; }
-    template<int I> T const& at(Inf<false>) const { OutOfRange<I, S> InvalidAccess; return data[I]; }
-    template<int I> T & at(Inf<true>) { return data[I]; }
-    template<int I> T & at(Inf<false>) { OutOfRange<I, S> InvalidAccess; return data[I]; }
+    template<int I> T& at() { static_assert(S>I,"NiQ La Peau LisSe."); return data[I];}
+    template<int I> T const& at() const { static_assert(S>I,"NiQ La Peau LisSe."); return data[I];}
 
-    T & x() { return at<0>(Inf < (S > 0) > {}); }
-    T & y() { return at<1>(Inf < (S > 1) > {}); }
-    T & z() { return at<2>(Inf < (S > 2) > {}); }
+    T & x() { return at<0>(); }
+    T & y() { return at<1>(); }
+    T & z() { return at<2>(); }
 
-    T const & x() const { return at<0>(Inf < (S > 0) > {}); }
-    T const & y() const { return at<1>(Inf < (S > 1) > {}); }
-    T const & z() const { return at<2>(Inf < (S > 2) > {}); }
+    T const & x() const { return at<0>(); }
+    T const & y() const { return at<1>(); }
+    T const & z() const { return at<2>(); }
 
     T norm() const
     {
