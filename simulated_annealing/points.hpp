@@ -1,15 +1,7 @@
 #include <vector>
 
-template<typename PT> struct Truc
-{
-    auto operator[](int i) const { return cast().data[i]; }
-    auto operator[](int i) { return cast().data[i]; }
 
-    PT const & cast() const { return static_cast<PT const&>(*this); }
-    PT & cast() { return static_cast<PT &>(*this); }
-};
-
-template<typename T, int S> struct PT : Truc<PT<T, S>>
+template<typename T, int S> struct PT
 {
     T data[S];
 
