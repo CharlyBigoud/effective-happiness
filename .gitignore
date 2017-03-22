@@ -1,7 +1,8 @@
-#exe
+#executable
 *.a
 *.o
 *.out
+*.burger
 
 #images
 *.jpg
