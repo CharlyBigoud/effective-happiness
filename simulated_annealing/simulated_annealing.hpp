@@ -15,6 +15,14 @@ struct CoolingSchedule{
 
 };
 
+template<typename F>
+struct State
+{
+    F f;
+    double exploration_value;
+
+    State<F> generate();
+};
 
 template<typename MODEL, typename STATE>
 struct SimulatedAnnealing
@@ -25,6 +33,9 @@ struct SimulatedAnnealing
     double acceptation_tolerance;
     double temperature_min;
     double iterations_max;
+
+    double temperature_max;
+    double iterations_max_for_each_temperature;
 
     //depend du schéma de refroissement
     double temperature(const int) const;
@@ -68,7 +79,7 @@ double SimulatedAnnealing<MODEL, STATE>::temperature(const int it) const
 template<typename MODEL, typename STATE>
 void SimulatedAnnealing<MODEL, STATE>::run()
 {
-    t = 500.0;
+    t = temperature_max;
 
     //energy_precedente is initiated with initial state;
     double energy_precedente = energy(this->model, state);
@@ -92,6 +103,80 @@ void SimulatedAnnealing<MODEL, STATE>::run()
         else
         {
             //rien du tout
+        }
+
+        ++it;
+    }
+};
+
+
+
+////////////////////////////
+// POUR LA FUNCTON
+///////////////////////////////
+template<typename STATE>
+struct SimulatedAnnealing2
+{
+    STATE& state;
+    const CoolingSchedule& cool;
+    double acceptation_tolerance;
+    double temperature_min;
+    double iterations_max;
+
+    //depend du schéma de refroissement
+    double temperature(const int) const;
+    bool metropolisCritieria(const double, const double);
+    void run();
+
+    double t;
+};
+
+template<typename STATE> double energy(const STATE&);
+
+template<typename STATE>
+bool SimulatedAnnealing2<STATE>::metropolisCritieria(const double delta_e, const double temperature)
+{
+    if (delta_e <= 0)
+    {
+        return true;
+    }
+    else if (random_value() <= std::exp( -delta_e / temperature) )
+    {
+        return true;
+    }
+    else return false;
+}
+
+
+template<typename STATE>
+double SimulatedAnnealing2<STATE>::temperature(const int it) const
+{
+    return double(it / iterations_max) * t;
+}
+
+template<typename STATE>
+void SimulatedAnnealing2<STATE>::run()
+{
+    t = 500.0;
+
+    //energy_precedente is initiated with initial state;
+    double energy_precedente = energy(state);
+
+    int it = 0;
+    while (
+        (it < iterations_max)
+    and (t >= temperature_min)
+    )
+    {
+        const STATE current_state = state.generate();
+        const double current_energy = energy(current_state);
+
+        if (metropolisCritieria(current_energy - energy_precedente, t))
+        {
+            state = current_state;
+            energy_precedente = current_energy;
+
+            t = temperature(it);
         }
 
         ++it;
