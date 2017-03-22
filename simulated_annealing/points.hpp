@@ -1,6 +1,5 @@
 #include <vector>
 
-
 template<typename T, int S> struct PT
 {
     T data[S];

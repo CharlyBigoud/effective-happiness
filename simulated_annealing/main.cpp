@@ -4,6 +4,7 @@
 #include <array>
 
 #include "simulated_annealing.hpp"
+#include "simple_function.hpp"
 #include "camera.hpp"
 
 struct Observations
@@ -86,11 +87,23 @@ int main()
     State state{
         to_optimize
         , 0.1
+    State<Function> simple_function{10.0, 0.1};
+    SimulatedAnnealing2<decltype(simple_function)> sa{
+        simple_function
+        , CoolingSchedule{}
+        , 10.0
+        , 0.0
+        , 1e4
+        , 1e3
     };
 
     SimulatedAnnealing<Observations, State> sa{
           observations
         , state
+    std::cout << "prout: " << simple_function.f.x << std::endl;
+    sa.run();
+    std::cout << "prout: " << simple_function.f.x << std::endl;
+
         , CoolingSchedule{}
         , 10.0
         , 0.0
