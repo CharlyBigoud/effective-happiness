@@ -23,7 +23,7 @@ template<typename STATE, typename ENERGY>
 struct SimulatedAnnealing
 {
     STATE& state;
-    ENERGY& e;
+    ENERGY& energy;
     const CoolingSchedule& cool;
     double acceptation_tolerance;
     double temperature_min;
@@ -67,7 +67,7 @@ void SimulatedAnnealing<STATE, ENERGY>::run()
     t = temperature_max;
 
     //previous_energy is initiated with initial state;
-    double previous_energy = e();
+    double previous_energy = energy(state);
 
     int it = 0;
     while (
@@ -76,8 +76,7 @@ void SimulatedAnnealing<STATE, ENERGY>::run()
     )
     {
         const STATE current_state = state.generate();
-        e.s = current_state;
-        const double current_energy = e();
+        const double current_energy = energy(current_state);
 
         if (metropolisCritieria(current_energy - previous_energy, t))
         {

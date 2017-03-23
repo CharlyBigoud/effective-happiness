@@ -12,7 +12,7 @@ struct SimpleFunction2
     double x;
     double exploration_value;
 
-    double operator()() const { return a * std::cos(b * x) + x * (x / c); }
+    double operator()() const { return 5.0 * std::cos(0.25  * x) + x * (x / 750.); }
 
     SimpleFunction2 generate();
 };
