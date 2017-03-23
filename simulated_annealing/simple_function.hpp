@@ -1,24 +1,30 @@
-struct Function
+struct State
 {
     double x;
+    double exploration_value;
 
-    double operator()() const { return x*x - M_PI; }
+    // double operator()() const { return x * x; }
+    // double operator()() const { return x * x - M_PI; }
+    double operator()() const { return x * (x - 1); }
+
+    State generate();
 };
 
-template<>
-double energy(const State<Function>& s)
-{
-    return std::abs(s.f());
-}
-
-template<>
-State<Function> State<Function>::generate()
+State State::generate()
 {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::normal_distribution<> distrib(0, exploration_value);
 
-    Function new_f{f.x + distrib(gen)};
-
-    return State<Function>{new_f, exploration_value};
+    return State{
+        x + distrib(gen)
+        , exploration_value
+        };
 }
+
+struct SimpleEnergy
+{
+    State s;
+
+    double operator()() const { return s(); }
+};

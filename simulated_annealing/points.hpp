@@ -31,3 +31,8 @@ using P3D = PT<double, 3>;
 
 using P2DS = std::vector<P2D>;
 using P3DS = std::vector<P3D>;
+
+double distance(const P2D& p1, const P2D& p2)
+{
+    return std::hypot(p1.x() - p2.x(), p1.y() - p2.y());
+}

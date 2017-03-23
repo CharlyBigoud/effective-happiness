@@ -31,3 +31,54 @@ std::ostream& operator<<(std::ostream& o, const PinholeCameraModel& ucm)
     o << "\t- l: " << ucm.l << "\n";
     return o;
 }
+
+struct Observations
+{
+    const P3DS& p3ds;
+    P2DS pixels;
+};
+
+template<typename F>
+struct CameraState
+{
+    F f;
+    double exploration_value;
+
+    CameraState<F> generate();
+};
+
+template<>
+CameraState<PinholeCameraModel> CameraState<PinholeCameraModel>::generate()
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<> distrib(0, exploration_value);
+
+    PinholeCameraModel pcm(
+      f.focal + distrib(gen)
+    , f.u0 + distrib(gen)
+    , f.v0 + distrib(gen)
+    // , f.k + distrib(gen)
+    // , f.l + distrib(gen)
+    );
+
+    return CameraState<PinholeCameraModel> {pcm, exploration_value};
+};
+
+struct Energy
+{
+    CameraState<PinholeCameraModel>& s;
+    const Observations& model;
+
+    double operator()() const
+    {
+        double e = 0.0;
+        for (size_t i = 0 ; i<model.pixels.size() ; ++i)
+        {
+            double d = distance(model.pixels[i], s.f.project(model.p3ds[i]));
+            e += std::hypot(d, d);
+        }
+
+        return std::sqrt(e / (double)model.pixels.size());
+    };
+};
