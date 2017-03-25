@@ -9,7 +9,7 @@ int main()
     std::mt19937 generator(rd());
     std::normal_distribution<> distrib(0, 10.0);
 
-    SimulatedAnnealing recuite(1e3, 0.0, int(1e5), 10.0);
+    SimulatedAnnealing sim(1e3, 0.0, int(1e5), 10.0);
 
     double x = -100.0;
     auto f = [](double x){ return 5.0 * std::cos(0.25 * x) + x * (x / 750.0); };
@@ -17,7 +17,7 @@ int main()
 
     std::cout << "initial value: " << x << " (err: " << f(x) << ")" << std::endl;
 
-    recuite(f, x, gen);
+    sim(f, x, gen);
 
     std::cout << "final value: " << x << " (err: " << f(x) << ")" << std::endl;
 }

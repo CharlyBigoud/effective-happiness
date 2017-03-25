@@ -3,98 +3,10 @@
 #include <vector>
 #include <array>
 
-#include <random>
-
 #include "simulated_annealing.hpp"
-
-struct MesParametres
-{
-
-};
-
-double ma_fonction_de_cout(MesParametres& )
-{
-    return 0;
-}
-
-struct Error
-{
-    double operator()(MesParametres p) const
-    {
-        return ma_fonction_de_cout(p);
-    }
-};
-
-struct Gen
-{
-    MesParametres operator()(MesParametres const& m) const { return m; }
-};
-
-
-
-
-
-struct RosenbrockParams
-{
-    double x, y;
-};
 
 int main()
 {
-    {
-        MesParametres params;
-        Error err;
-        SimulatedAnnealing recuite;
-        recuite(err, params, Gen());
-    }
-
-    SimulatedAnnealing recuite(1e3, 0.0, int(1e5), 10.0);
-    double x = -100.0;
-    // double x = 0.0;
-    auto f = [](double x){ return 5.0 * std::cos(0.25 * x) + x * (x / 750.0); };
-    // auto gen = [](double x){ return x + 1000.0 * (((double) std::rand() / (RAND_MAX)) - 0.5); };
-
-    std::random_device rd;
-    std::mt19937 generator(rd());
-    std::normal_distribution<> distrib(0, 1.0);
-
-    auto gen = [&](double x){ return x + distrib(generator); };
-
-    std::cout << "initial value: " << x << " (err: " << f(x) << ")" << std::endl;
-    recuite(f, x, gen);
-    std::cout << "final value: " << x << " (err: " << f(x) << ")" << std::endl;
-
-
-
-    //SimulatedAnnealing
-    // std::cout << "faire schéma de refroidissment" << std::endl;
-    // std::cout << "bug si les params sont égaux a zero" << std::endl;
-    // std::cout << "bug si on optimize k et l" << std::endl;
-    // std::cout << std::endl;
-
-
-    // SimpleFunction2 simple_function_2{
-    //       5.0, 0.25, 750.0
-    //     , -10.0
-    //     , 1.0
-    // };
-    // SimpleEnergy2 energy2{simple_function_2};
-
-    // SimulatedAnnealing<decltype(simple_function_2), SimpleEnergy2> sa3{
-    //     simple_function_2
-    //     , energy2
-    //     , CoolingSchedule{}
-    //     , 10.0
-    //     , 0.0
-    //     , int(1e4)
-    //     , int(1e3)
-    // };
-
-    // std::cout << "simple_function_2: " << simple_function_2.x << std::endl;
-    // sa3.run();
-    // std::cout << "simple_function_2: " << simple_function_2.x << std::endl;
-    // std::cout << std::endl;
-
 //////////////////////Camera//////////////////////
 
     // // building reference
