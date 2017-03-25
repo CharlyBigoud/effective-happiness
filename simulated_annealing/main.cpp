@@ -66,46 +66,12 @@ int main()
 
 
 
-    ///rosenbrock
-    SimulatedAnnealing ros_recuite(1e3, 0.0, int(1e6), 10.0);
-
-    auto ros_err = [](const RosenbrockParams& r){ return (1 - r.x) * (1 - r.x) + 100 * (r.y - r.x * r.x) * (r.y - r.x * r.x); };
-    RosenbrockParams ros_parameters{100.0, 100.0};  
-    auto ros_gen = [&](const RosenbrockParams& r){
-        return RosenbrockParams{r.x + distrib(generator), r.y + distrib(generator)};
-    };
-
-    std::cout << "initial value: (" << ros_parameters.x << ", " << ros_parameters.y << ") (err: " << ros_err(ros_parameters) << ")" << std::endl;
-    ros_recuite(ros_err, ros_parameters, ros_gen);
-    std::cout << "final value: (" << ros_parameters.x << ", " << ros_parameters.y << ") (err: " << ros_err(ros_parameters) << ")" << std::endl;
-
-
-
-
-
     //SimulatedAnnealing
     // std::cout << "faire schéma de refroidissment" << std::endl;
     // std::cout << "bug si les params sont égaux a zero" << std::endl;
     // std::cout << "bug si on optimize k et l" << std::endl;
     // std::cout << std::endl;
 
-    // State simple_function{100.0, 1.0};
-    // SimpleEnergy energy{simple_function};
-
-    // SimulatedAnnealing<decltype(simple_function), SimpleEnergy> sa{
-    //       simple_function
-    //     , energy
-    //     , CoolingSchedule{}
-    //     , 10.0
-    //     , 0.0
-    //     , int(1e4)
-    //     , 1e3
-    // };
-
-    // std::cout << "simple_function: " << simple_function.x << std::endl;
-    // sa.run();
-    // std::cout << "simple_function: " << simple_function.x << " cost " << simple_function() << std::endl;
-    // std::cout << std::endl;
 
     // SimpleFunction2 simple_function_2{
     //       5.0, 0.25, 750.0
