@@ -13,79 +13,67 @@
 // température peut parfois remonter.
 struct CoolingSchedule{};
 
-//returns a value between 0 or 1
-double random_value()
-{
-    return ((double) std::rand() / (RAND_MAX));
-}
-
-template<typename STATE, typename ENERGY>
 struct SimulatedAnnealing
 {
-    STATE& state;
-    ENERGY& energy;
-    const CoolingSchedule& cool;
+    double start_temperature;
+    double stop_temperature;
+    int max_iterations;
     double acceptation_tolerance;
-    double temperature_min;
-    int iterations_max;
 
-    double temperature_max;
-    double iterations_max_for_each_temperature;
+    double current_temperature;
+    // double max_iterations_max_for_each;
 
-    //depend du schéma de refroissement
-    double temperature(const int) const;
-    bool metropolisCritieria(const double, const double);
-    void run();
-
-    double t;
-};
-
-template<typename STATE, typename ENERGY>
-bool SimulatedAnnealing<STATE, ENERGY>::metropolisCritieria(const double delta_e, const double temperature)
-{
-    if (delta_e <= 0)
+    double random_value()
     {
-        return true;
+        return ((double) std::rand() / (RAND_MAX));
     }
-    else if (random_value() <= std::exp( -delta_e / temperature) )
+
+    SimulatedAnnealing( double start_tmp = 1000.0, double stop_tmp = 0.0, double it_max = 1000, double tol = 0.1)
+    : start_temperature(start_tmp), stop_temperature(stop_tmp), max_iterations(it_max), acceptation_tolerance(tol)
+    // , max_iterations_max_for_each(it_max) //pour l'instant on s'en fou
+    {};
+
+    bool metropolisCritieria(const double delta_e, const double temperature)
     {
-        return true;
-    }
-    else return false;
-}
-
-
-template<typename STATE, typename ENERGY>
-double SimulatedAnnealing<STATE, ENERGY>::temperature(const int it) const
-{
-    return double(it / iterations_max) * t;
-}
-
-template<typename STATE, typename ENERGY>
-void SimulatedAnnealing<STATE, ENERGY>::run()
-{
-    t = temperature_max;
-
-    //previous_energy is initiated with initial state;
-    double previous_energy = energy(state);
-
-    int it = 0;
-    while (
-        (it < iterations_max)
-    and (t >= temperature_min)
-    )
-    {
-        const STATE current_state = state.generate();
-        const double current_energy = energy(current_state);
-
-        if (metropolisCritieria(current_energy - previous_energy, t))
+        if (delta_e <= 0)
         {
-            state = current_state;
-            previous_energy = current_energy;
-
-            t = temperature(it);
+            return true;
         }
+        else if (random_value() <= std::exp( -delta_e / temperature) )
+        {
+            return true;
+        }
+        else return false;
+    }
 
-        ++it;
+    double temperature(const int it) const { return double(it / max_iterations) * current_temperature; };
+
+    template<typename Energy, typename State, typename Generator>
+    void operator()(const Energy& energy, State& state, const Generator& gen)
+    {
+        current_temperature = start_temperature;
+
+        //previous_energy is initiated with initial state;
+        double previous_energy = energy(state);
+
+        int it = 0;
+        while (
+            (it < max_iterations)
+        and (current_temperature >= stop_temperature)
+        )
+        {
+            const State current_state = gen(state);
+            const double current_energy = energy(current_state);
+
+            if (metropolisCritieria(current_energy - previous_energy, current_temperature))
+            {
+                state = current_state;
+                previous_energy = current_energy;
+
+                current_temperature = temperature(it);
+            }
+
+            ++it;
+        }
     }
 };
