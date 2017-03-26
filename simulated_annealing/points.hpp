@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 
 template<typename T, int S> struct PT
@@ -35,4 +37,18 @@ using P3DS = std::vector<P3D>;
 double distance(const P2D& p1, const P2D& p2)
 {
     return std::hypot(p1.x() - p2.x(), p1.y() - p2.y());
+}
+
+std::ostream& operator<<(std::ostream& o, const P2D& p)
+{
+    o << "{" << p.x() << ", " << p.y() << "}";
+
+    return o;
+}
+
+std::ostream& operator<<(std::ostream& o, const P3D& p)
+{
+    o << "{" << p.x() << ", " << p.y() << ", " << p.z() << "}";
+
+    return o;
 }
