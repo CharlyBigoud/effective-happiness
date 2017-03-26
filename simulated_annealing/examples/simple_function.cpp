@@ -13,7 +13,7 @@ int main()
 
     double x = -100.0;
     auto f = [](double x){ return 5.0 * std::cos(0.25 * x) + x * (x / 750.0); };
-    auto gen = [&](double x){ return x + distrib(generator); };
+    auto gen = [&](double x){ return x + distrib(generator);};
 
     std::cout << "initial value: " << x << " (err: " << f(x) << ")" << std::endl;
 
