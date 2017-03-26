@@ -9,7 +9,7 @@ int main()
     std::mt19937 generator(rd());
     std::normal_distribution<> distrib(0, 10.0);
 
-    SimulatedAnnealing sim(1e3, 0.0, int(1e5), 10.0);
+    SimulatedAnnealing sim(1e3, 0.0, int(1e5));
 
     double x = -100.0;
     auto f = [](double x){ return 5.0 * std::cos(0.25 * x) + x * (x / 750.0); };

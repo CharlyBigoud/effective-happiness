@@ -36,7 +36,7 @@ struct Generator
 
 int main()
 {
-    SimulatedAnnealing sim(1e3, 0.0, int(1e5), 10.0);
+    SimulatedAnnealing sim(1e3, 0.0, int(1e5));
 
     Energy energy;
     Parameters params;

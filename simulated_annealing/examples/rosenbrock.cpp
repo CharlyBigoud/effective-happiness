@@ -15,7 +15,7 @@ int main()
     std::mt19937 generator(rd());
     std::normal_distribution<> distrib(0, 1.0);
 
-    SimulatedAnnealing sim(1e3, 0.0, int(1e6), 10.0);
+    SimulatedAnnealing sim(1e3, 0.0, int(1e6));
 
     auto ros_err = [](const Parameters& r)
     {

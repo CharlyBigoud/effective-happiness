@@ -7,14 +7,14 @@
 
 double cost_function(const Observations& observations, const PinholeCameraModel& model)
 {
-    double e = 0.0;
+    double err = 0.0;
     for (size_t i = 0 ; i<observations.pixels.size() ; ++i)
     {
-        double d = distance(observations.pixels[i], model.project(observations.p3ds[i]));
-        e += std::hypot(d, d);
+        double d = distance(observations.pixels.at(i), model.project(observations.p3ds.at(i)));
+        err += std::hypot(d, d);
     }
 
-    return std::sqrt(e / (double)observations.pixels.size());
+    return std::sqrt(err / (double)observations.pixels.size());
 }
 
 struct Energy
@@ -39,8 +39,8 @@ struct Generator
               p.focal + distrib(gen)
             , p.u0 + distrib(gen)
             , p.v0 + distrib(gen)
-            // , p.k + distrib(gen)
-            // , p.l + distrib(gen)
+            , p.k + distrib(gen)
+            , p.l + distrib(gen)
         };
     }
 };
@@ -51,7 +51,7 @@ int main()
     std::mt19937 g(rd());
     std::normal_distribution<> distrib(0, 10.0);
 
-    SimulatedAnnealing sim(1e3, 0.0, int(1e5), 10.0);
+    SimulatedAnnealing sim(1e10, 0.0, int(1e10));
 
     PinholeCameraModel reference_camera{200.0, 400.0, 400.0, 1.0, 1.0};
 
@@ -62,15 +62,15 @@ int main()
     {
         observations.p3ds.emplace_back( double(p*distrib(g)), double(p*distrib(g)), 100.0);
     }
-    for (auto& p : observations.p3ds)
-        std::cout << p << "\n";
+    // for (auto& p : observations.p3ds)
+    //     std::cout << p << "\n";
 
 
     observations.pixels.resize(observations.p3ds.size());
     for (size_t i=0 ; i<observations.pixels.size() ; ++i)
         observations.pixels[i] = reference_camera.project(observations.p3ds[i]);
-    for (auto& p : observations.pixels)
-        std::cout << p << "\n";
+    // for (auto& p : observations.pixels)
+    //     std::cout << p << "\n";
 
     PinholeCameraModel camera_to_optimize;
     // PinholeCameraModel camera_to_optimize{199.0, 400.0, 400.0, 1.0, 1.0};
