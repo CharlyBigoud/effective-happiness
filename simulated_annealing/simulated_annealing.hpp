@@ -1,3 +1,5 @@
+#pragma once
+
 #include <random>
 
 // https://fr.wikipedia.org/wiki/Recuit_simul%C3%A9
@@ -46,10 +48,13 @@ struct SimulatedAnnealing
         else return false;
     }
 
-    double temperature(const int it) const { return double(it / max_iterations) * current_temperature; };
+    double temperature(const int it) const
+    {
+        return double(it / max_iterations) * current_temperature;
+    };
 
     template<typename Energy, typename State, typename Generator>
-    void operator()(const Energy& energy, State& state, const Generator& gen)
+    void operator()(const Energy& energy, State& state, const Generator& generate)
     {
         current_temperature = start_temperature;
 
@@ -62,7 +67,7 @@ struct SimulatedAnnealing
         and (current_temperature >= stop_temperature)
         )
         {
-            const State current_state = gen(state);
+            const State current_state = generate(state);
             const double current_energy = energy(current_state);
 
             if (metropolisCritieria(current_energy - previous_energy, current_temperature))
