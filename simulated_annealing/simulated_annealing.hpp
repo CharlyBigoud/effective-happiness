@@ -86,12 +86,17 @@ struct SimulatedAnnealing
                 state = current_state;
                 previous_energy = current_energy;
 
-                print<double, green>(*this);
+                // print<double, green>(*this);
+                print(*this, Accepted{});
 
                 current_temperature = temperature(current_temperature);
             }
+            else
+            {
+                // print<double, red>(*this);
+                print(*this, Rejected{});
+            }
             
-            print<double, red>(*this);
 
             ++current_it;
         }

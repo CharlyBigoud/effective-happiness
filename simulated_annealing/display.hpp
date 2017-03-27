@@ -67,3 +67,34 @@ void print(
     // // std::cout << s.d_energy << "\t";
     std::cout << std::endl;
 }
+
+struct Accepted{};
+struct Rejected{};
+
+template<typename Solver>
+void print(
+      const Solver& s
+    , Accepted
+    )
+{
+    std::cout << green(s.current_it) << "\t";
+    std::cout << green(s.current_temperature) << "\t";
+    std::cout << green(s.current_temperature - s.temperature(s.current_temperature)) << "\t";
+    std::cout << green(s.current_energy) << "\t";
+    // // std::cout << s.d_energy << "\t";
+    std::cout << std::endl;
+}
+
+template<typename Solver>
+void print(
+      const Solver& s
+    , Rejected
+    )
+{
+    std::cout << red(s.current_it) << "\t";
+    std::cout << red(s.current_temperature) << "\t";
+    std::cout << red(s.current_temperature - s.temperature(s.current_temperature)) << "\t";
+    std::cout << red(s.current_energy) << "\t";
+    // // std::cout << s.d_energy << "\t";
+    std::cout << std::endl;
+}
