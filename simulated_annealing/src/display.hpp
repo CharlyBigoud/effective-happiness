@@ -96,5 +96,16 @@ void print(
     std::cout << red(s.current_temperature - s.temperature(s.current_temperature)) << "\t";
     std::cout << red(s.current_energy) << "\t";
     // // std::cout << s.d_energy << "\t";
+    
+    // std::cout << std::string(60, '\b');
+    std::cout << std::endl;
+}
+
+template<typename Solver>
+void final_print(const Solver& s)
+{
+    std::cout << std::endl;
+    std::cout << "Final temperature: " << s.current_temperature << "\n";
+    std::cout << "Final energy: " << s.current_energy << "\n";
     std::cout << std::endl;
 }

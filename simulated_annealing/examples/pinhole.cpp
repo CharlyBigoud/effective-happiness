@@ -3,7 +3,7 @@
 
 #include "../points.hpp"
 #include "../camera.hpp"
-#include "../simulated_annealing.hpp"
+#include "../src/simulated_annealing.hpp"
 
 double cost_function(const Observations& observations, const PinholeCameraModel& model)
 {
@@ -33,7 +33,7 @@ struct Generator
     {
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::normal_distribution<> distrib(0, 1.0);
+        std::normal_distribution<> distrib(0, 0.01);
 
         return PinholeCameraModel{
               p.focal + distrib(gen)
@@ -51,7 +51,7 @@ int main()
     std::mt19937 g(rd());
     std::normal_distribution<> distrib(0, 10.0);
 
-    SimulatedAnnealing sim(1e10, 0.0, int(1e10));
+    SimulatedAnnealing sim(1e3, 0.0, int(1e3));
 
     PinholeCameraModel reference_camera{200.0, 400.0, 400.0, 1.0, 1.0};
 
@@ -72,8 +72,8 @@ int main()
     // for (auto& p : observations.pixels)
     //     std::cout << p << "\n";
 
-    PinholeCameraModel camera_to_optimize;
-    // PinholeCameraModel camera_to_optimize{199.0, 400.0, 400.0, 1.0, 1.0};
+    // PinholeCameraModel camera_to_optimize;
+    PinholeCameraModel camera_to_optimize{200.0, 400.0, 400.0, 1.0, 1.0};
     Energy energy{observations};
     Generator gen;
 

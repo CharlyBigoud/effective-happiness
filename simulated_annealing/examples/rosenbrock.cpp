@@ -1,7 +1,7 @@
 #include <iostream>
 #include <random>
 
-#include "../simulated_annealing.hpp"
+#include "../src/simulated_annealing.hpp"
 
 //parameters to optimize
 struct Parameters
@@ -15,7 +15,12 @@ int main()
     std::mt19937 generator(rd());
     std::normal_distribution<> distrib(0, 1.0);
 
-    SimulatedAnnealing sim(1e3, 0.0, int(1e6));
+    SimulatedAnnealing sim(
+        1e3     //start temp
+        , 1e-3 //stop temp
+        , int(1e1) //max it
+        , 1e-4 //energy min
+        );
 
     auto ros_err = [](const Parameters& r)
     {

@@ -22,6 +22,7 @@ struct SimulatedAnnealing
     double start_temperature;
     double stop_temperature;
     int max_iterations;
+    double min_energy;
     // double acceptation_tolerance;
 
     double current_temperature;
@@ -31,13 +32,13 @@ struct SimulatedAnnealing
 
     double random_value()
     {
-        return ((double) std::rand() / (RAND_MAX));
+        return double(std::rand()) / double(RAND_MAX);
     }
 
-    SimulatedAnnealing( double start_tmp = 1000.0, double stop_tmp = 0.0, double it_max = 1000
+    SimulatedAnnealing(double start_tmp = 1e3, double stop_tmp = 0.0, int it_max = 1000, double min_e = 0.0
         //, double tol = 0.1
         )
-    : start_temperature(start_tmp), stop_temperature(stop_tmp), max_iterations(it_max)
+    : start_temperature(start_tmp), stop_temperature(stop_tmp), max_iterations(it_max), min_energy(min_e)
     // , acceptation_tolerance(tol)
     // , max_iterations_max_for_each(it_max) //pour l'instant on s'en fou
     {};
@@ -54,13 +55,12 @@ struct SimulatedAnnealing
 
     // double temperature(const int it) const
     // {
-    //     return double(it / max_iterations) * current_temperature;
+    //     return double(it) / double(max_iterations) * current_temperature;
     // };
 
     double temperature(const double t) const
     {
         return 0.99 * t;
-        // return double(current_it) / double(max_iterations) * current_temperature;
     };
 
     template<typename Energy, typename State, typename Generator>
@@ -70,12 +70,14 @@ struct SimulatedAnnealing
         current_it = 0;
         current_temperature = start_temperature;
         double previous_energy = energy(state);
+        current_energy = previous_energy;
 
         bar();
 
         while (
             (current_it < max_iterations)
         and (current_temperature >= stop_temperature)
+        and (current_energy >= min_energy)
         )
         {
             const State current_state = generate(state);
@@ -100,5 +102,7 @@ struct SimulatedAnnealing
 
             ++current_it;
         }
+
+        final_print(*this);
     }
 };
