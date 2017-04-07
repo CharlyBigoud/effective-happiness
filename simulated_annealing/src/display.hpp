@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
 #include <string.h>
 
 // void bar();
@@ -54,19 +55,19 @@ void bar()
 
 // template<typename Solver, typename Color>
 // template<typename Solver, typename T, typename Color = std::string (*Color)(T&)>
-template<typename T, std::string (*Color)(const T&), typename Solver>
-void print(
-      const Solver& s
-    // , const Color& c
-    )
-{
-    std::cout << Color(s.current_it) << "\t";
-    std::cout << Color(s.current_temperature) << "\t";
-    std::cout << Color(s.current_temperature - s.temperature(s.current_temperature)) << "\t";
-    std::cout << Color(s.current_energy) << "\t";
-    // // std::cout << s.d_energy << "\t";
-    std::cout << std::endl;
-}
+// template<typename T, std::string (*Color)(const T&), typename Solver>
+// void print(
+//       const Solver& s
+//     // , const Color& c
+//     )
+// {
+//     std::cout << Color(s.current_it) << "\t";
+//     std::cout << Color(s.current_temperature) << "\t";
+//     std::cout << Color(s.current_temperature - s.temperature(s.current_temperature)) << "\t";
+//     std::cout << Color(s.current_energy) << "\t";
+//     // // std::cout << s.d_energy << "\t";
+//     std::cout << std::endl;
+// }
 
 struct Accepted{};
 struct Rejected{};
@@ -79,7 +80,8 @@ void print(
 {
     std::cout << green(s.current_it) << "\t";
     std::cout << green(s.current_temperature) << "\t";
-    std::cout << green(s.current_temperature - s.temperature(s.current_temperature)) << "\t";
+    std::cout << green(s.current_temperature - s.temperature()) << "\t";
+    // std::cout << std::hexfloat << std::setprecision(3) << green(s.current_energy) << "\t";
     std::cout << green(s.current_energy) << "\t";
     // // std::cout << s.d_energy << "\t";
     std::cout << std::endl;
@@ -93,10 +95,11 @@ void print(
 {
     std::cout << red(s.current_it) << "\t";
     std::cout << red(s.current_temperature) << "\t";
-    std::cout << red(s.current_temperature - s.temperature(s.current_temperature)) << "\t";
+    std::cout << red(s.current_temperature - s.temperature()) << "\t";
+    // std::cout << std::hexfloat << std::setprecision(3) << red(s.current_energy) << "\t";
     std::cout << red(s.current_energy) << "\t";
     // // std::cout << s.d_energy << "\t";
-    
+
     // std::cout << std::string(60, '\b');
     std::cout << std::endl;
 }

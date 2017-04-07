@@ -53,15 +53,22 @@ struct SimulatedAnnealing
             return false;
     }
 
-    // double temperature(const int it) const
+
+
+
+////gives new tempratures
+    // double temperature() const
     // {
     //     return double(it) / double(max_iterations) * current_temperature;
     // };
 
-    double temperature(const double t) const
+    double temperature() const
     {
-        return 0.99 * t;
+        return 0.99 * current_temperature;
     };
+
+
+
 
     template<typename Energy, typename State, typename Generator>
     void operator()(const Energy& energy, State& state, const Generator& generate)
@@ -80,7 +87,7 @@ struct SimulatedAnnealing
         and (current_energy >= min_energy)
         )
         {
-            const State current_state = generate(state);
+            const State current_state = generate(state, *this);
             current_energy = energy(current_state);
 
             if (metropolisCritieria(current_energy - previous_energy, current_temperature))
@@ -91,14 +98,13 @@ struct SimulatedAnnealing
                 // print<double, green>(*this);
                 print(*this, Accepted{});
 
-                current_temperature = temperature(current_temperature);
+                current_temperature = temperature();
             }
             else
             {
                 // print<double, red>(*this);
-                print(*this, Rejected{});
+                // print(*this, Rejected{});
             }
-            
 
             ++current_it;
         }
