@@ -48,6 +48,11 @@ int main()
     a[1] = 10;
     a[2] = 20;
     a[3] = 30;
+
+    for (std::size_t i = 0; i < 4; ++i)
+        std::cout << a[i] << ", ";
+        std::cout << std::endl;
+
     std::cout << a << std::endl;
 
     // AlignedArray<int, 4> b{1,2,3,4};
