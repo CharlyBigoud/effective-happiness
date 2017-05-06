@@ -71,7 +71,7 @@ int main()
     Box box{set, set2};
     for(int i=0 ; i<20; ++i)
     {
-        std::array<int,2> vals = box.get(i);
+        auto vals = box.get(i);
         std::cout << vals[0] << "\t" << vals[1] << std::endl;
     }
     std::cout << std::endl;
