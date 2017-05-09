@@ -106,3 +106,25 @@ int main()
 
     return 0;
 }
+
+/*
+#include <iostream>
+
+template<int I, int J, int K> struct Range{};
+
+template<int I, int K> void loop(Range<I,I,K>) {}
+
+template<int I, int J, int K> void loop(Range<I,J,K>)
+{
+ std::cout << I << " " << J << " " << K << std::endl;
+ loop(Range<I+K,J,K>{});
+}
+
+int main()
+{
+
+  loop(Range<3,15,3>{});
+
+}
+
+*/
