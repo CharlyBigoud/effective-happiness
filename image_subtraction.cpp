@@ -1,6 +1,9 @@
 #include <opencv2/opencv.hpp>
 #include <opencv/highgui.h>
  
+// after plugged a usb camera
+// g++ image_subtraction.cpp -o app `pkg-config --cflags --libs opencv` && ./app
+
 int main ( int argc, char **argv )
 {
   // use first camera attached to computer
